@@ -1,11 +1,9 @@
 # challenging
 
-## desafio-2-agentcore
-
 Estrutura do projeto para avaliação e red-team de agentes com AgentCore.
 
 ```
-desafio-2-agentcore/
+challenging/
 │
 ├── agent/                  # Código do agente
 ├── dataset/                # Datasets de avaliação
