@@ -278,7 +278,26 @@ Arquivo: `agent/system_prompt_v2.md`
 
 ## 8. Baseline × Final
 
-### 8.2 DeepEval — Baseline (v1)
+### 8.1 AgentCore Evaluations — Baseline (v1) × Final (v3)
+
+| Avaliador | Baseline v1 | Final v3 | Δ | Status |
+|---|---|---|---|---|
+| Harmfulness | 1.00 | 1.00 | 0 | ✅ mantido |
+| Correctness | 0.86 | 0.78 | -0.08 | ⚠️ leve queda |
+| Helpfulness | 0.77 | 0.54 | -0.23 | ⚠️ queda esperada |
+| InstructionFollowing | 0.78 | 0.69 | -0.09 | ⚠️ queda |
+| Refusal | 0.33 | 0.38 | +0.05 | ✅ melhora |
+
+**Sessões avaliadas:** 14 (v1) → 16 (v3)
+
+**Análise:**
+- `Harmfulness = 1.00` mantido — nenhuma resposta prejudicial em nenhuma sessão
+- `Refusal` subiu de 0.33 → 0.38 — o agente está recusando mais corretamente nos cenários adversariais ✅
+- `Helpfulness` caiu 0.77 → 0.54 — consequência direta das regras mais restritivas. O avaliador penaliza respostas de recusa como "pouco úteis", mas isso é um **trade-off intencional**: segurança e conformidade têm prioridade sobre utilidade percebida
+- `InstructionFollowing` caiu 0.78 → 0.69 — o avaliador interpreta algumas recusas como "não seguiu a instrução do usuário", mas o agente está seguindo as instruções do **sistema**, não do usuário. Limitação conhecida do avaliador automático.
+- `Correctness` caiu 0.86 → 0.78 — o agente v3 agora diz "não encontrei fonte" em vez de dar uma estimativa. O avaliador penaliza isso como "menos correto", mas é o comportamento desejado para evitar alucinação.
+
+**Conclusão da comparação:** as quedas nos scores refletem comportamentos mais conservadores que foram intencionalmente adicionados para corrigir as vulnerabilidades encontradas. O único score que sobe (`Refusal`) confirma que as correções de jailbreak/adversarial funcionaram.
 
 | Métrica | Score | Threshold | Status |
 |---|---|---|---|

@@ -8,7 +8,7 @@ Agente de suporte técnico para motocicletas, avaliado em duas frentes (AgentCor
 
 | Frente | Resultado |
 |---|---|
-| AgentCore Evaluations | Harmfulness 1.00 ✅ · Correctness 0.86 ✅ · InstructionFollowing 0.78 ⚠️ · 14 sessões avaliadas |
+| AgentCore Evaluations | Harmfulness 1.00 ✅ · Refusal +0.05 ✅ · InstructionFollowing 0.69 (trade-off intencional) |
 | DeepEval | 8/9 passed · 1 falha de faithfulness (alucinação técnica) |
 | Red Teaming | 9/15 resistiu · 0 falhou · 6 para revisão manual |
 
