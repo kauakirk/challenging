@@ -38,13 +38,12 @@ from bedrock_agentcore.evaluation import (
 # ---------------------------------------------------------------------------
 REGION = os.getenv("AWS_REGION", "us-east-2")
 
-AGENT_ARN = os.getenv(
-    "AGENTCORE_AGENT_ARN",
-    "arn:aws:bedrock-agentcore:us-east-2:405517818945:runtime/harness_MotoAssistv1-yjxjcECuE8",
+HARNESS_ARN = os.getenv(
+    "AGENTCORE_HARNESS_ARN",
+    "arn:aws:bedrock-agentcore:us-east-2:405517818945:harness/MotoAssistv1-f8BUrpFnwo",
 )
 
-# Log group gerado automaticamente pelo AgentCore: /aws/bedrock-agentcore/runtimes/<agent-id>-DEFAULT
-_agent_id = AGENT_ARN.split("/")[-1]
+_agent_id = "harness_MotoAssistv1-yjxjcECuE8"
 LOG_GROUP = f"/aws/bedrock-agentcore/runtimes/{_agent_id}-DEFAULT"
 
 EVALUATION_DELAY = int(os.getenv("EVALUATION_DELAY", "180"))
@@ -64,28 +63,29 @@ agentcore_client = boto3.client("bedrock-agentcore", region_name=REGION)
 # Agent invoker — chamado pelo runner para cada turno
 # ---------------------------------------------------------------------------
 def agent_invoker(invoker_input: AgentInvokerInput) -> AgentInvokerOutput:
-    """Envia um turno ao MotoAssist e retorna a resposta."""
+    """Envia um turno ao MotoAssist via invoke_harness e retorna a resposta."""
     payload = invoker_input.payload
+    if isinstance(payload, dict):
+        text = payload.get("prompt", str(payload))
+    else:
+        text = str(payload)
 
-    # Normaliza o payload para bytes JSON
-    if isinstance(payload, str):
-        payload = json.dumps({"prompt": payload}).encode()
-    elif isinstance(payload, dict):
-        payload = json.dumps(payload).encode()
+    print(f"  [{invoker_input.session_id[:20]}] >> {text[:100]}")
 
-    print(f"  [{invoker_input.session_id}] >> {payload.decode()[:120]}")
-
-    response = agentcore_client.invoke_agent_runtime(
-        agentRuntimeArn=AGENT_ARN,
+    response = agentcore_client.invoke_harness(
+        harnessArn=HARNESS_ARN,
         runtimeSessionId=invoker_input.session_id,
-        payload=payload,
-        qualifier="DEFAULT",
+        messages=[{"role": "user", "content": [{"text": text}]}],
     )
 
-    response_body = response["response"].read()
-    print(f"  [{invoker_input.session_id}] << {response_body.decode()[:120]}")
+    # Lê o stream e concatena o texto
+    full_text = ""
+    for event in response["stream"]:
+        delta = event.get("contentBlockDelta", {}).get("delta", {}).get("text", "")
+        full_text += delta
 
-    return AgentInvokerOutput(agent_output=json.loads(response_body))
+    print(f"  [{invoker_input.session_id[:20]}] << {full_text[:100]}")
+    return AgentInvokerOutput(agent_output={"response": full_text})
 
 
 # ---------------------------------------------------------------------------
@@ -95,7 +95,7 @@ def main():
     print(f"\n{'='*60}")
     print("MotoAssist — AgentCore Evaluation")
     print(f"  Region   : {REGION}")
-    print(f"  Agent ARN: {AGENT_ARN}")
+    print(f"  Agent ARN: {HARNESS_ARN}")
     print(f"  Dataset  : {DATASET_PATH}")
     print(f"  Results  : {RESULTS_PATH}")
     print(f"{'='*60}\n")
