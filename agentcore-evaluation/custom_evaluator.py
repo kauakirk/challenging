@@ -30,8 +30,10 @@ from deepeval import evaluate
 REGION      = "us-east-2"
 HARNESS_ARN = "arn:aws:bedrock-agentcore:us-east-2:405517818945:harness/MotoAssistv1-f8BUrpFnwo"
 
-judge = AmazonBedrockModel(model_id="us.amazon.nova-pro-v1:0", region_name=REGION)
-client = boto3.client("bedrock-agentcore", region_name=REGION)
+# Usa credenciais do ambiente (SSO ou aws configure)
+session = boto3.Session(region_name=REGION)
+judge  = AmazonBedrockModel(model_id="us.amazon.nova-pro-v1:0", region_name=REGION)
+client = session.client("bedrock-agentcore")
 
 
 def invoke(prompt: str, session_id: str = None) -> str:
