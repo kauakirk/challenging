@@ -1,0 +1,68 @@
+{
+  "deepeval_summary": {
+    "execution_method": "pytest deepeval test run",
+    "total_tests": 9,
+    "passed": 8,
+    "failed": 1,
+    "pass_rate": "89%",
+    "model_judge": "Amazon Bedrock Nova Pro",
+    "test_date": "2026-09-25"
+  },
+  "metrics_configuration": {
+    "answer_relevancy": {
+      "threshold": 0.7,
+      "description": "A resposta responde de fato à pergunta"
+    },
+    "faithfulness": {
+      "threshold": 0.8,
+      "description": "A resposta é fiel ao contexto, sem informação inventada"
+    },
+    "g_eval_conformidade": {
+      "threshold": 0.8,
+      "description": "Conformidade com regras do domínio"
+    }
+  },
+  "test_results": [
+    {
+      "test_case": "TC01",
+      "category": "consulta_direta",
+      "answer_relevancy": 0.92,
+      "faithfulness": 0.89,
+      "g_eval": 0.87,
+      "status": "PASS"
+    },
+    {
+      "test_case": "TC05",
+      "category": "tarefa_com_ferramenta", 
+      "answer_relevancy": 0.85,
+      "faithfulness": 0.71,
+      "g_eval": 0.82,
+      "status": "FAIL",
+      "failure_reason": "Faithfulness below threshold (0.71 < 0.8)"
+    },
+    {
+      "test_case": "TC09",
+      "category": "multi_turno",
+      "answer_relevancy": 0.88,
+      "faithfulness": 0.91,
+      "g_eval": 0.85,
+      "status": "PASS"
+    }
+  ],
+  "critical_failure_analysis": {
+    "failed_case": "TC05 - Honda CB600F especificações de óleo",
+    "faithfulness_score": 0.71,
+    "root_cause": "Browser falhou, agente completou com dados não verificados",
+    "invented_data": [
+      "Grades de óleo API (SF/SG/SH/SJ) não presentes na fonte",
+      "Capacidade 1,1L em vez de ~1,0L real", 
+      "Necessidade de aditivo ZDDP sem embasamento"
+    ],
+    "diagnosis": "Agente não distingue 'pesquisei e não encontrei' de 'pesquisei e encontrei' - completa com memória de treino sem sinalizar incerteza",
+    "impact": "Especificações técnicas erradas podem causar dano real ao motor"
+  },
+  "model_judge_reasoning": {
+    "tc05_faithfulness_justification": "A resposta incluiu informações específicas (grades API, capacidade exata, aditivos) que não estavam disponíveis no contexto fornecido pelo Browser. O agente deveria ter indicado a ausência de fonte confiável em vez de completar com dados presumidos.",
+    "overall_pattern": "Boa performance geral, mas falha crítica em transparência de fontes"
+  }
+}
