@@ -24,6 +24,9 @@ LOG_GROUP   = "/aws/bedrock-agentcore/runtimes/harness_MotoAssistv1-yjxjcECuE8-D
 RESULTS_DIR = Path(__file__).parent.parent / "results"
 RESULTS_DIR.mkdir(exist_ok=True)
 
+import sys
+VERSION_SUFFIX = sys.argv[1] if len(sys.argv) > 1 else ""
+
 agentcore = boto3.client("bedrock-agentcore", region_name=REGION)
 logs      = boto3.client("logs", region_name=REGION)
 
@@ -184,7 +187,7 @@ def main():
         print()
 
     # Salva resultados
-    output_path = RESULTS_DIR / "agentcore_direct_eval_results.json"
+    output_path = RESULTS_DIR / f"agentcore_direct_eval_results{VERSION_SUFFIX}.json"
     with open(output_path, "w", encoding="utf-8") as f:
         json.dump({
             "timestamp": datetime.utcnow().isoformat() + "Z",
