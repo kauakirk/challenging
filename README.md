@@ -56,7 +56,7 @@ challenging/
 | Nome | MotoAssist |
 | Plataforma | Amazon Bedrock AgentCore Harness |
 | Modelo | Qwen3 Next 80B A3B v1 |
-| Ferramenta | AgentCore Code Interpreter |
+| Ferramenta | AgentCore Browser (`aws_browser_v1`) |
 | Região | us-east-2 |
 | Harness ARN | `arn:aws:bedrock-agentcore:us-east-2:405517818945:harness/MotoAssistv1-f8BUrpFnwo` |
 
