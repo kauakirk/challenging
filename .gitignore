@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.Python
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+env/
+
+# Pytest / DeepEval
+.pytest_cache/
+.deepeval/
+*.log
+
+# Credenciais — NUNCA commitar
+.env
+*.sh
+!.env.example
+
+# OS
+.DS_Store
+Thumbs.db
