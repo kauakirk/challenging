@@ -79,6 +79,7 @@ def agent_invoker(invoker_input: AgentInvokerInput) -> AgentInvokerOutput:
         agentRuntimeArn=AGENT_ARN,
         runtimeSessionId=invoker_input.session_id,
         payload=payload,
+        qualifier="DEFAULT",
     )
 
     response_body = response["response"].read()
